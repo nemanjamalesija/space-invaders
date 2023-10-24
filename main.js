@@ -65,7 +65,48 @@ class Projectile {
   }
 }
 
-class Enemy {}
+class Enemy {
+  constructor(game) {
+    this.game = game;
+    this.width;
+    this.height;
+    this.x;
+    this.y;
+  }
+
+  draw(context) {
+    context.strokeRect(this.x, this.y, this.width, this.height);
+  }
+
+  update() {}
+}
+
+class Wave {
+  constructor(game) {
+    this.game = game;
+    this.width = this.game.columns * this.game.enemySize;
+    this.height = this.game.rows * this.game.enemySize;
+    this.x = 0;
+    this.y = 0;
+
+    this.speedX = 1;
+    this.speedY = 0;
+  }
+
+  render(context) {
+    this.speedY = 0;
+    context.strokeRect(this.x, this.y, this.width, this.height);
+    this.x += this.speedX;
+
+    if (this.x < 0 || this.x > this.game.width - this.width) {
+      this.speedX *= -1;
+      this.speedY = this.game.enemySize;
+    }
+
+    this.x += this.speedX;
+    this.y += this.speedY;
+  }
+}
 
 class Game {
   constructor(canvas) {
@@ -79,6 +120,13 @@ class Game {
     this.projectilesPool = [];
     this.numberOfProjectiles = 10;
     this.createProjectiles();
+
+    this.columns = 3;
+    this.rows = 3;
+    this.enemySize = 60;
+
+    this.waves = [];
+    this.waves.push(new Wave(this));
 
     // event listeners
     window.addEventListener('keydown', (e) => {
@@ -103,6 +151,9 @@ class Game {
       p.update();
       p.draw(context);
     });
+    this.waves.forEach((w) => {
+      w.render(context);
+    });
   }
 
   createProjectiles() {
@@ -125,6 +176,8 @@ window.addEventListener('load', function () {
   canvas.width = 600;
   canvas.height = 700;
   ctx.fillStyle = '#fff';
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 5;
 
   const game = new Game(canvas);
 
