@@ -26,7 +26,35 @@ class Player {
   }
 }
 
-class Projectile {}
+class Projectile {
+  constructor() {
+    this.width = 4;
+    this.height = 20;
+    this.x = 0;
+    this.y = 0;
+    this.speed = 20;
+    this.free = true;
+  }
+  draw(context) {
+    if (!this.free) {
+      context.fillRect(this.x, this.y, this.width, this.height);
+    }
+  }
+
+  update() {
+    if (!this.free) {
+      this.y -= this.speed;
+    }
+  }
+
+  start() {
+    this.free = false;
+  }
+
+  reset() {
+    this.free = true;
+  }
+}
 
 class Enemy {}
 
@@ -38,6 +66,11 @@ class Game {
 
     this.keys = [];
     this.player = new Player(this);
+
+    this.projectilesPool = [];
+    this.numberOfProjectiles = 10;
+    this.createProjectiles();
+    console.log(this.projectilesPool);
 
     // event listeners
     window.addEventListener('keydown', (e) => {
@@ -57,6 +90,18 @@ class Game {
   render(context) {
     this.player.draw(context);
     this.player.update();
+  }
+
+  createProjectiles() {
+    for (let i = 0; i < this.numberOfProjectiles; i++) {
+      this.projectilesPool.push(new Projectile());
+    }
+  }
+
+  getProjectiles() {
+    for (let i = 0; i < this.projectilesPool.length; i++) {
+      if (this.projectilesPool[i].free) return this.projectilesPool[i];
+    }
   }
 }
 
