@@ -79,7 +79,6 @@ class Game {
     this.projectilesPool = [];
     this.numberOfProjectiles = 10;
     this.createProjectiles();
-    console.log(this.projectilesPool);
 
     // event listeners
     window.addEventListener('keydown', (e) => {
@@ -122,8 +121,10 @@ class Game {
 window.addEventListener('load', function () {
   const canvas = document.getElementById('canvas1');
   const ctx = canvas.getContext('2d');
+
   canvas.width = 600;
   canvas.height = 700;
+  ctx.fillStyle = '#fff';
 
   const game = new Game(canvas);
 
