@@ -15,9 +15,14 @@ class Player {
   }
 
   update() {
+    // horizontal movement
     if (this.game.keys.indexOf('ArrowLeft') > -1) this.x -= this.speed;
-
     if (this.game.keys.indexOf('ArrowRight') > -1) this.x += this.speed;
+
+    // horizontal boundaries
+    if (this.x < 0) this.x = 0;
+    if (this.x > this.game.width - this.width)
+      this.x = this.game.width - this.width;
   }
 }
 
