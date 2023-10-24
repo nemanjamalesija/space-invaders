@@ -1,6 +1,23 @@
 import './style.css';
 
-class Player {}
+class Player {
+  constructor(game) {
+    this.game = game;
+    this.width = 100;
+    this.height = 100;
+    this.x = this.game.width * 0.5 - this.width * 0.5;
+    this.y = this.game.height - this.height;
+    this.speed = 5;
+  }
+
+  draw(context) {
+    context.fillRect(this.x, this.y, this.width, this.height);
+  }
+
+  update() {
+    this.x += this.speed;
+  }
+}
 
 class Projectile {}
 
@@ -11,9 +28,11 @@ class Game {
     this.canvas = canvas;
     this.width = this.canvas.width;
     this.height = this.canvas.height;
+    this.player = new Player(this);
   }
-  render() {
-    console.log(this.height, this.width);
+  render(context) {
+    this.player.draw(context);
+    this.player.update();
   }
 }
 
@@ -24,5 +43,11 @@ window.addEventListener('load', function () {
   canvas.height = 700;
 
   const game = new Game(canvas);
-  console.log(game);
+
+  function animate() {
+    game.render(ctx);
+    window.requestAnimationFrame(animate);
+  }
+
+  animate();
 });
