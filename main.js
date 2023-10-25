@@ -93,7 +93,7 @@ class Wave {
     this.width = this.game.columns * this.game.enemySize;
     this.height = this.game.rows * this.game.enemySize;
     this.x = 0;
-    this.y = 0;
+    this.y = -this.height;
 
     this.speedX = 1;
     this.speedY = 0;
@@ -102,6 +102,7 @@ class Wave {
   }
 
   render(context) {
+    if (this.y < 0) this.y += 5; // float in per animation frame
     this.speedY = 0;
 
     if (this.x < 0 || this.x > this.game.width - this.width) {
@@ -142,8 +143,8 @@ class Game {
     this.numberOfProjectiles = 10;
     this.createProjectiles();
 
-    this.columns = 3;
-    this.rows = 3;
+    this.columns = 5;
+    this.rows = 7;
     this.enemySize = 60;
 
     this.waves = [];
