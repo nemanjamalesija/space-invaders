@@ -189,6 +189,15 @@ class Game {
       if (this.projectilesPool[i].free) return this.projectilesPool[i];
     }
   }
+  // colision detection berween 2 rectangles
+  checkCollision(a, b) {
+    return (
+      a.x < b.x + b.width &&
+      a.x + a.width > b.x &&
+      a.y < b.y + b.height &&
+      a.y + a.height > b.y
+    );
+  }
 }
 
 window.addEventListener('load', function () {
