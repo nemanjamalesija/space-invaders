@@ -75,6 +75,7 @@ class Enemy {
     // position of the enemy within the wave
     this.positionX = positionX;
     this.positionY = positionY;
+    this.markedForDeletion = false;
   }
 
   draw(context) {
@@ -84,6 +85,12 @@ class Enemy {
   update(x, y) {
     this.x = x + this.positionX;
     this.y = y + this.positionY;
+    // check collision enemis - projectiles
+    this.game.projectilesPool.forEach((element) => {
+      if (this.game.checkCollision(this, element)) {
+        this.markedForDeletion = true;
+      }
+    });
   }
 }
 
@@ -117,6 +124,7 @@ class Wave {
       e.update(this.x, this.y);
       e.draw(context);
     });
+    this.enemies = this.enemies.filter((o) => !o.markedForDeletion);
   }
 
   create() {
