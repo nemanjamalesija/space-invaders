@@ -12,8 +12,8 @@ class Game {
     this.numberOfProjectiles = 10;
     this.createProjectiles();
 
-    this.columns = 2;
-    this.rows = 2;
+    this.columns = 5;
+    this.rows = 5;
     this.enemySize = 60;
 
     this.waves = [];
@@ -102,8 +102,18 @@ class Game {
   }
 
   newWave() {
-    this.columns++;
-    this.rows++;
+    if (
+      Math.random() < 0.5 &&
+      this.columns * this.enemySize < this.width * 0.8
+    ) {
+      this.columns++;
+    } else if (
+      this.rows * this.enemySize <
+      this.height * 0.6
+    ) {
+      this.rows++;
+    }
+
     this.waves.push(new Wave(this));
   }
 }
