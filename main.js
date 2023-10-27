@@ -1,4 +1,73 @@
 import './style.css';
+class Game {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.width = this.canvas.width;
+    this.height = this.canvas.height;
+
+    this.keys = [];
+    this.player = new Player(this);
+
+    this.projectilesPool = [];
+    this.numberOfProjectiles = 10;
+    this.createProjectiles();
+
+    this.columns = 5;
+    this.rows = 7;
+    this.enemySize = 60;
+
+    this.waves = [];
+    this.waves.push(new Wave(this));
+
+    // event listeners
+    window.addEventListener('keydown', (e) => {
+      // this binding to lexical scope (arrow function)
+      const index = this.keys.indexOf(e.key);
+
+      if (index === -1) this.keys.push(e.key);
+      if (e.key === '1') this.player.shoot();
+    });
+
+    window.addEventListener('keyup', (e) => {
+      // this binding to lexical scope (arrow function)
+      const index = this.keys.indexOf(e.key);
+      if (index > -1) this.keys.splice(index, 1);
+    });
+  }
+  render(context) {
+    this.player.draw(context);
+    this.player.update();
+    this.projectilesPool.forEach((p) => {
+      p.update();
+      p.draw(context);
+    });
+    this.waves.forEach((w) => {
+      w.render(context);
+    });
+  }
+
+  createProjectiles() {
+    for (let i = 0; i < this.numberOfProjectiles; i++) {
+      this.projectilesPool.push(new Projectile());
+    }
+  }
+
+  getProjectile() {
+    for (let i = 0; i < this.projectilesPool.length; i++) {
+      if (this.projectilesPool[i].free)
+        return this.projectilesPool[i];
+    }
+  }
+  // colision detection berween 2 rectangles
+  checkCollision(a, b) {
+    return (
+      a.x < b.x + b.width &&
+      a.x + a.width > b.x &&
+      a.y < b.y + b.height &&
+      a.y + a.height > b.y
+    );
+  }
+}
 
 class Player {
   constructor(game) {
@@ -11,16 +80,24 @@ class Player {
   }
 
   draw(context) {
-    context.fillRect(this.x, this.y, this.width, this.height);
+    context.fillRect(
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
   }
 
   update() {
     // horizontal movement
-    if (this.game.keys.indexOf('ArrowLeft') > -1) this.x -= this.speed;
-    if (this.game.keys.indexOf('ArrowRight') > -1) this.x += this.speed;
+    if (this.game.keys.indexOf('ArrowLeft') > -1)
+      this.x -= this.speed;
+    if (this.game.keys.indexOf('ArrowRight') > -1)
+      this.x += this.speed;
 
     // horizontal boundaries
-    if (this.x < -this.width * 0.5) this.x = -this.width * 0.5;
+    if (this.x < -this.width * 0.5)
+      this.x = -this.width * 0.5;
     if (this.x > this.game.width - this.width * 0.5)
       this.x = this.game.width - this.width * 0.5;
   }
@@ -28,7 +105,8 @@ class Player {
   shoot() {
     const projectile = this.game.getProjectile();
 
-    if (projectile) projectile.start(this.x + this.width * 0.5, this.y);
+    if (projectile)
+      projectile.start(this.x + this.width * 0.5, this.y);
   }
 }
 
@@ -41,9 +119,15 @@ class Projectile {
     this.speed = 20;
     this.free = true;
   }
+
   draw(context) {
     if (!this.free) {
-      context.fillRect(this.x, this.y, this.width, this.height);
+      context.fillRect(
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
     }
   }
 
@@ -79,16 +163,25 @@ class Enemy {
   }
 
   draw(context) {
-    context.strokeRect(this.x, this.y, this.width, this.height);
+    context.strokeRect(
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
   }
 
   update(x, y) {
     this.x = x + this.positionX;
     this.y = y + this.positionY;
     // check collision enemis - projectiles
-    this.game.projectilesPool.forEach((element) => {
-      if (this.game.checkCollision(this, element)) {
+    this.game.projectilesPool.forEach((projectile) => {
+      if (
+        !projectile.free &&
+        this.game.checkCollision(this, projectile)
+      ) {
         this.markedForDeletion = true;
+        projectile.reset();
       }
     });
   }
@@ -112,7 +205,10 @@ class Wave {
     if (this.y < 0) this.y += 5; // float in per animation frame
     this.speedY = 0;
 
-    if (this.x < 0 || this.x > this.game.width - this.width) {
+    if (
+      this.x < 0 ||
+      this.x > this.game.width - this.width
+    ) {
       this.speedX *= -1;
       this.speedY = this.game.enemySize;
     }
@@ -124,7 +220,9 @@ class Wave {
       e.update(this.x, this.y);
       e.draw(context);
     });
-    this.enemies = this.enemies.filter((o) => !o.markedForDeletion);
+    this.enemies = this.enemies.filter(
+      (o) => !o.markedForDeletion
+    );
   }
 
   create() {
@@ -132,79 +230,11 @@ class Wave {
       for (let x = 0; x < this.game.columns; x++) {
         let enemyX = x * this.game.enemySize;
         let enemyY = y * this.game.enemySize;
-        this.enemies.push(new Enemy(this.game, enemyX, enemyY));
+        this.enemies.push(
+          new Enemy(this.game, enemyX, enemyY)
+        );
       }
     }
-  }
-}
-
-class Game {
-  constructor(canvas) {
-    this.canvas = canvas;
-    this.width = this.canvas.width;
-    this.height = this.canvas.height;
-
-    this.keys = [];
-    this.player = new Player(this);
-
-    this.projectilesPool = [];
-    this.numberOfProjectiles = 10;
-    this.createProjectiles();
-
-    this.columns = 5;
-    this.rows = 7;
-    this.enemySize = 60;
-
-    this.waves = [];
-    this.waves.push(new Wave(this));
-
-    // event listeners
-    window.addEventListener('keydown', (e) => {
-      // this binding to lexical scope (arrow function)
-      const index = this.keys.indexOf(e.key);
-
-      if (index === -1) this.keys.push(e.key);
-      if (e.key === '1') this.player.shoot();
-    });
-
-    window.addEventListener('keyup', (e) => {
-      // this binding to lexical scope (arrow function)
-      const index = this.keys.indexOf(e.key);
-
-      if (index > -1) this.keys.splice(index, 1);
-    });
-  }
-  render(context) {
-    this.player.draw(context);
-    this.player.update();
-    this.projectilesPool.forEach((p) => {
-      p.update();
-      p.draw(context);
-    });
-    this.waves.forEach((w) => {
-      w.render(context);
-    });
-  }
-
-  createProjectiles() {
-    for (let i = 0; i < this.numberOfProjectiles; i++) {
-      this.projectilesPool.push(new Projectile());
-    }
-  }
-
-  getProjectile() {
-    for (let i = 0; i < this.projectilesPool.length; i++) {
-      if (this.projectilesPool[i].free) return this.projectilesPool[i];
-    }
-  }
-  // colision detection berween 2 rectangles
-  checkCollision(a, b) {
-    return (
-      a.x < b.x + b.width &&
-      a.x + a.width > b.x &&
-      a.y < b.y + b.height &&
-      a.y + a.height > b.y
-    );
   }
 }
 
