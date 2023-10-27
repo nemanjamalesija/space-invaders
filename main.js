@@ -12,8 +12,8 @@ class Game {
     this.numberOfProjectiles = 10;
     this.createProjectiles();
 
-    this.columns = 5;
-    this.rows = 5;
+    this.columns = 2;
+    this.rows = 2;
     this.enemySize = 60;
 
     this.waves = [];
@@ -57,6 +57,7 @@ class Game {
         this.newWave();
         this.waveCount++;
         wave.nextWaveTrigger = true;
+        this.player.lives++;
       }
     });
   }
@@ -89,6 +90,11 @@ class Game {
     context.shadowColor = 'black';
     context.fillText(`Wave: ${this.waveCount}`, 20, 80);
     context.fillText(`Score: ${this.score}`, 20, 40);
+
+    // draw status text
+    for (let i = 0; i < this.player.lives; i++) {
+      context.fillRect(20 + 10 * i, 100, 5, 20);
+    }
     if (this.gameOver) {
       context.textAlign = 'center';
       context.font = '100px Impact';
@@ -126,6 +132,7 @@ class Player {
     this.x = this.game.width * 0.5 - this.width * 0.5;
     this.y = this.game.height - this.height;
     this.speed = 10;
+    this.lives = 3;
   }
 
   draw(context) {
@@ -234,6 +241,16 @@ class Enemy {
         this.game.score++;
       }
     });
+
+    //check colision enemies - player
+    if (this.game.checkCollision(this, this.game.player)) {
+      this.markedForDeletion = true;
+      if (!this.gameOver && this.game.score > 0)
+        this.game.score--;
+      this.game.player.lives--;
+      if (this.game.player.lives < 1)
+        this.game.gameOver = true;
+    }
 
     // lose condition
     if (this.y + this.height > this.game.height) {
