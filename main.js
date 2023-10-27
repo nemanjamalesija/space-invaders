@@ -19,6 +19,8 @@ class Game {
     this.waves = [];
     this.waves.push(new Wave(this));
 
+    this.score = 0;
+
     // event listeners
     window.addEventListener('keydown', (e) => {
       // this binding to lexical scope (arrow function)
@@ -35,6 +37,7 @@ class Game {
     });
   }
   render(context) {
+    this.drawStatusText(context);
     this.player.draw(context);
     this.player.update();
     this.projectilesPool.forEach((p) => {
@@ -66,6 +69,9 @@ class Game {
       a.y < b.y + b.height &&
       a.y + a.height > b.y
     );
+  }
+  drawStatusText(context) {
+    context.fillText(`Score: ${this.score}`, 20, 40);
   }
 }
 
@@ -182,6 +188,7 @@ class Enemy {
       ) {
         this.markedForDeletion = true;
         projectile.reset();
+        this.game.score++;
       }
     });
   }
@@ -247,6 +254,7 @@ window.addEventListener('load', function () {
   ctx.fillStyle = '#fff';
   ctx.strokeStyle = '#fff';
   ctx.lineWidth = 5;
+  ctx.font = '30px Impact';
 
   const game = new Game(canvas);
 
