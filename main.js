@@ -12,8 +12,8 @@ class Game {
     this.numberOfProjectiles = 10;
     this.createProjectiles();
 
-    this.columns = 2;
-    this.rows = 2;
+    this.columns = 10;
+    this.rows = 10;
     this.enemySize = 60;
 
     this.waves = [];
@@ -102,6 +102,12 @@ class Game {
         'GAME OVER',
         this.width * 0.5,
         this.height * 0.5
+      );
+      context.font = '20px Impact';
+      context.fillText(
+        'Press R to restart',
+        this.width * 0.5,
+        this.height * 0.5 + 30
       );
     }
     context.restore();
@@ -238,7 +244,7 @@ class Enemy {
       ) {
         this.markedForDeletion = true;
         projectile.reset();
-        this.game.score++;
+        if (!this.game.gameOver) this.game.score++;
       }
     });
 
