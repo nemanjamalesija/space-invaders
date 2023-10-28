@@ -275,11 +275,19 @@ class Enemy {
         !projectile.free &&
         this.game.checkCollision(this, projectile)
       ) {
-        this.markedForDeletion = true;
+        this.hit(1);
         projectile.reset();
-        if (!this.game.gameOver) this.game.score++;
       }
     });
+
+    if (this.lives < 1) {
+      this.frameX++;
+      if (this.frameX > this.maxFrame) {
+        this.markedForDeletion = true;
+        if (!this.game.gameOver)
+          this.game.score += this.maxLives;
+      }
+    }
 
     //check colision enemies - player
     if (this.game.checkCollision(this, this.game.player)) {
@@ -297,6 +305,10 @@ class Enemy {
       this.markedForDeletion = true;
     }
   }
+
+  hit(damage) {
+    this.lives -= damage;
+  }
 }
 
 class Beetlemorph extends Enemy {
@@ -304,7 +316,10 @@ class Beetlemorph extends Enemy {
     super(game, positionX, positionY);
     this.image = document.getElementById('beetlemorph');
     this.frameX = 0;
+    this.maxFrame = 2;
     this.frameY = Math.floor(Math.random() * 4);
+    this.lives = 1;
+    this.maxLives = this.lives;
   }
 }
 
