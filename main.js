@@ -253,6 +253,7 @@ class Enemy {
       this.width,
       this.height
     );
+    context.drawImage(this.image, this.x, this.y);
   }
 
   update(x, y) {
@@ -285,6 +286,13 @@ class Enemy {
       this.game.gameOver = true;
       this.markedForDeletion = true;
     }
+  }
+}
+
+class Beetlemorph extends Enemy {
+  constructor(game, positionX, positionY) {
+    super(game, positionX, positionY);
+    this.image = document.getElementById('beetlemorph');
   }
 }
 
@@ -333,7 +341,7 @@ class Wave {
         let enemyX = x * this.game.enemySize;
         let enemyY = y * this.game.enemySize;
         this.enemies.push(
-          new Enemy(this.game, enemyX, enemyY)
+          new Beetlemorph(this.game, enemyX, enemyY)
         );
       }
     }
