@@ -11,6 +11,7 @@ class Game {
     this.projectilesPool = [];
     this.numberOfProjectiles = 10;
     this.createProjectiles();
+    this.fired = false;
 
     this.columns = 2;
     this.rows = 2;
@@ -29,7 +30,8 @@ class Game {
       const index = this.keys.indexOf(e.key);
 
       if (index === -1) this.keys.push(e.key);
-      if (e.key === '1') this.player.shoot();
+      if (e.key === '1' && !this.fired) this.player.shoot();
+      this.fired = true;
       if (e.key === 'r' && this.gameOver) this.restart();
     });
 
@@ -37,6 +39,7 @@ class Game {
       // this binding to lexical scope (arrow function)
       const index = this.keys.indexOf(e.key);
       if (index > -1) this.keys.splice(index, 1);
+      this.fired = false;
     });
   }
   render(context) {
