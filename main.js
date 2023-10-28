@@ -24,6 +24,10 @@ class Game {
     this.gameOver = false;
     this.waveCount = 1;
 
+    this.spriteUpdate = false;
+    this.spriteTimer = 0;
+    this.spriteInterval = 500;
+
     // event listeners
     window.addEventListener('keydown', (e) => {
       // this binding to lexical scope (arrow function)
@@ -42,7 +46,17 @@ class Game {
       this.fired = false;
     });
   }
-  render(context) {
+  render(context, deltaTime) {
+    // sprite timing
+
+    // if (this.spriteTimer > this.spriteInterval) {
+    //   this.spriteUpdate = true;
+    //   this.spriteTimer = 0;
+    // } else {
+    //   this.spriteUpdate = false;
+    //   this.spriteTimer += deltaTime;
+    // }
+
     this.drawStatusText(context);
     this.player.draw(context);
     this.player.update();
@@ -388,11 +402,15 @@ window.addEventListener('load', function () {
 
   const game = new Game(canvas);
 
-  function animate() {
+  let lastTime = 0;
+  function animate(timeStamp) {
+    const deltaTime = timeStamp - lastTime;
+    lastTime = timeStamp;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.render(ctx);
+    game.render(ctx, deltaTime);
     window.requestAnimationFrame(animate);
   }
 
-  animate();
+  animate(0);
 });
