@@ -247,12 +247,12 @@ class Enemy {
   }
 
   draw(context) {
-    context.strokeRect(
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
+    // context.strokeRect(
+    //   this.x,
+    //   this.y,
+    //   this.width,
+    //   this.height
+    // );
     context.drawImage(
       this.image,
       this.frameX * this.width, // move horizontally along the sprite sheet
@@ -328,10 +328,10 @@ class Wave {
     this.game = game;
     this.width = this.game.columns * this.game.enemySize;
     this.height = this.game.rows * this.game.enemySize;
-    this.x = 0;
+    this.x = this.game.width * 0.5 - this.width * 0.5;
     this.y = -this.height;
 
-    this.speedX = 1;
+    this.speedX = Math.random() < 0.5 ? -1 : 1;
     this.speedY = 0;
     this.nextWaveTrigger = false;
     this.enemies = [];
