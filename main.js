@@ -255,8 +255,8 @@ class Enemy {
     );
     context.drawImage(
       this.image,
-      0,
-      0,
+      this.frameX * this.width, // move horizontally along the sprite sheet
+      this.frameY * this.height, // move vertically along the sprite sheet
       this.width,
       this.height,
       this.x,
@@ -304,7 +304,7 @@ class Beetlemorph extends Enemy {
     super(game, positionX, positionY);
     this.image = document.getElementById('beetlemorph');
     this.frameX = 0;
-    this.frameY = 0;
+    this.frameY = Math.floor(Math.random() * 4);
   }
 }
 
