@@ -173,7 +173,7 @@ class Player {
     this.image = document.getElementById('player');
     this.jetsImage = document.getElementById('player_jets');
     this.frameX = 0;
-    this.jetsFrame = 0;
+    this.jetsFrame = 1;
   }
 
   draw(context) {
@@ -181,11 +181,11 @@ class Player {
     if (this.game.keys.indexOf('1') > -1) {
       this.frameX = 2;
     } else {
-      this.frameX = 0;
+      this.frameX = 1;
     }
     context.drawImage(
       this.jetsImage,
-      this.frameX * this.width,
+      this.jetsFrame * this.width,
       0,
       this.width,
       this.height,
@@ -210,10 +210,15 @@ class Player {
 
   update() {
     // horizontal movement
-    if (this.game.keys.indexOf('ArrowLeft') > -1)
+    if (this.game.keys.indexOf('ArrowLeft') > -1) {
       this.x -= this.speed;
-    if (this.game.keys.indexOf('ArrowRight') > -1)
+      this.jetsFrame = 2;
+    } else if (this.game.keys.indexOf('ArrowRight') > -1) {
       this.x += this.speed;
+      this.jetsFrame = 0;
+    } else {
+      this.jetsFrame = 1;
+    }
 
     // horizontal boundaries
     if (this.x < -this.width * 0.5)
