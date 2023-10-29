@@ -9,12 +9,12 @@ class Game {
     this.player = new Player(this);
 
     this.projectilesPool = [];
-    this.numberOfProjectiles = 10;
+    this.numberOfProjectiles = 15;
     this.createProjectiles();
     this.fired = false;
 
-    this.columns = 2;
-    this.rows = 2;
+    this.columns = 1;
+    this.rows = 1;
     this.enemySize = 80;
 
     this.waves = [];
@@ -76,7 +76,8 @@ class Game {
         this.newWave();
         this.waveCount++;
         wave.nextWaveTrigger = true;
-        this.player.lives++;
+        if (this.player.lives < this.player.maxLives)
+          this.player.lives++;
       }
     });
   }
@@ -110,9 +111,14 @@ class Game {
     context.fillText(`Wave: ${this.waveCount}`, 20, 80);
     context.fillText(`Score: ${this.score}`, 20, 40);
 
-    // draw status text
+    // draw max lives
+    for (let i = 0; i < this.player.maxLives; i++) {
+      context.strokeRect(20 + 20 * i, 100, 10, 15);
+    }
+
+    // draw lives
     for (let i = 0; i < this.player.lives; i++) {
-      context.fillRect(20 + 10 * i, 100, 5, 20);
+      context.fillRect(20 + 20 * i, 100, 15, 15);
     }
     if (this.gameOver) {
       context.textAlign = 'center';
@@ -170,6 +176,7 @@ class Player {
     this.y = this.game.height - this.height;
     this.speed = 5;
     this.lives = 3;
+    this.maxLives = 10;
     this.image = document.getElementById('player');
     this.jetsImage = document.getElementById('player_jets');
     this.frameX = 0;
@@ -319,7 +326,7 @@ class Enemy {
   update(x, y) {
     this.x = x + this.positionX;
     this.y = y + this.positionY;
-    // check collision enemis - projectiles
+    // check collision enemies - projectiles
     this.game.projectilesPool.forEach((projectile) => {
       if (
         !projectile.free &&
@@ -340,19 +347,21 @@ class Enemy {
     }
 
     //check colision enemies - player
-    if (this.game.checkCollision(this, this.game.player)) {
-      this.markedForDeletion = true;
-      if (!this.gameOver && this.game.score > 0)
-        this.game.score--;
+    if (
+      this.game.checkCollision(this, this.game.player) &&
+      this.lives > 0
+    ) {
+      this.lives = 0;
+
       this.game.player.lives--;
-      if (this.game.player.lives < 1)
-        this.game.gameOver = true;
     }
 
     // lose condition
-    if (this.y + this.height > this.game.height) {
+    if (
+      this.y + this.height > this.game.height ||
+      this.game.player.lives < 1
+    ) {
       this.game.gameOver = true;
-      this.markedForDeletion = true;
     }
   }
 
@@ -433,7 +442,6 @@ window.addEventListener('load', function () {
   canvas.height = 700;
   ctx.fillStyle = '#fff';
   ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 5;
   ctx.font = '30px Impact';
 
   const game = new Game(canvas);
