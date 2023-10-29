@@ -58,12 +58,13 @@ class Game {
     // }
 
     this.drawStatusText(context);
-    this.player.draw(context);
-    this.player.update();
     this.projectilesPool.forEach((p) => {
       p.update();
       p.draw(context);
     });
+    this.player.draw(context);
+    this.player.update();
+
     this.waves.forEach((wave) => {
       wave.render(context);
 
@@ -176,7 +177,7 @@ class Player {
   draw(context) {
     // handle sprite frames
     if (this.game.keys.indexOf('1') > -1) {
-      this.frameX = 1;
+      this.frameX = 2;
     } else {
       this.frameX = 0;
     }
