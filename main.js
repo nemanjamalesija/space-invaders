@@ -171,7 +171,9 @@ class Player {
     this.speed = 5;
     this.lives = 3;
     this.image = document.getElementById('player');
+    this.jetsImage = document.getElementById('player_jets');
     this.frameX = 0;
+    this.jetsFrame = 0;
   }
 
   draw(context) {
@@ -181,6 +183,18 @@ class Player {
     } else {
       this.frameX = 0;
     }
+    context.drawImage(
+      this.jetsImage,
+      this.frameX * this.width,
+      0,
+      this.width,
+      this.height,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
+
     context.drawImage(
       this.image,
       this.frameX * this.width,
