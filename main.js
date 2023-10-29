@@ -34,7 +34,8 @@ class Game {
       const index = this.keys.indexOf(e.key);
 
       if (index === -1) this.keys.push(e.key);
-      if (e.key === '1' && !this.fired) this.player.shoot();
+      if (e.keyCode === 32 && !this.fired)
+        this.player.shoot();
       this.fired = true;
       if (e.key === 'r' && this.gameOver) this.restart();
     });
